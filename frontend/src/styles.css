@@ -236,3 +236,12 @@ img, svg { max-width: 100%; }
 .muscle.tap:focus-visible > * { stroke: var(--fg); stroke-width: 1.5; }
 .routine-top { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
 .routine-top h2 { font-size: 17px; }
+
+/* ---- cards never wider than the screen; long text wraps or is cut with … ---- */
+.list { grid-template-columns: minmax(0, 1fr); }
+.list > li, .card, main, .app { min-width: 0; }
+.routine-top > .grow { min-width: 0; overflow-wrap: anywhere; }
+.routine-top h2 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plan li { gap: 12px; min-width: 0; }
+.plan li > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card .actions { flex-wrap: wrap; }
