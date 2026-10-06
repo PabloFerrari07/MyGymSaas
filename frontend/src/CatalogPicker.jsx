@@ -104,7 +104,14 @@ export default function ExerciseSheet({ title, library, picked, onPick, onClose 
             type="search"
             placeholder="Buscar: press banca, sentadilla, remo…"
             value={q}
+            enterKeyHint="search"
             onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                e.currentTarget.blur() // hide the keyboard and show the results
+              }
+            }}
           />
         )}
       </div>

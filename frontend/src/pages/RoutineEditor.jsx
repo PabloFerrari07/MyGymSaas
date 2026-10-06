@@ -86,6 +86,7 @@ export default function RoutineEditor() {
   }
 
   return (
+    <>
     <form onSubmit={save}>
       <header className="head">
         <h1>{id ? 'Editar rutina' : 'Nueva rutina'}</h1>
@@ -96,6 +97,7 @@ export default function RoutineEditor() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
+        enterKeyHint="done"
       />
 
       <h2 className="section">Ejercicios ({items.length})</h2>
@@ -142,16 +144,18 @@ export default function RoutineEditor() {
           {id ? 'Guardar cambios' : 'Crear rutina'}
         </button>
       </div>
-
-      {picking && (
-        <ExerciseSheet
-          title="Añadir a la rutina"
-          library={library || []}
-          picked={items.map((i) => i.image_url)}
-          onPick={toggle}
-          onClose={() => setPicking(false)}
-        />
-      )}
     </form>
+
+    {/* Outside the form: the keyboard's Enter key must never save the routine. */}
+    {picking && (
+      <ExerciseSheet
+        title="Añadir a la rutina"
+        library={library || []}
+        picked={items.map((i) => i.image_url)}
+        onPick={toggle}
+        onClose={() => setPicking(false)}
+      />
+    )}
+    </>
   )
 }
