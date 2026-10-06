@@ -8,12 +8,13 @@ import Log from './pages/Log.jsx'
 import Progress from './pages/Progress.jsx'
 import Login from './pages/Login.jsx'
 import { useAuth } from './auth.jsx'
+import Icon from './icons.jsx'
 
 const TABS = [
-  ['/routines', '🏋️', 'Rutinas'],
-  ['/exercises', '💪', 'Ejercicios'],
-  ['/progress', '📈', 'Progreso'],
-  ['/log', '🗓️', 'Historial'],
+  ['/routines', 'routines', 'Rutinas'],
+  ['/exercises', 'exercises', 'Ejercicios'],
+  ['/progress', 'progress', 'Progreso'],
+  ['/log', 'history', 'Historial'],
 ]
 
 export default function App() {
@@ -27,7 +28,7 @@ export default function App() {
     <div className={`app ${focus ? '' : 'has-tabs'}`}>
       <header className="topbar">
         <span className="brand">mygym</span>
-        <button className="icon" onClick={logout} aria-label="Cerrar sesión" title="Cerrar sesión">⎋</button>
+        <button className="icon" onClick={logout} aria-label="Cerrar sesión" title="Cerrar sesión"><Icon name="logout" size={20} /></button>
       </header>
       <main>
         <Routes>
@@ -46,7 +47,7 @@ export default function App() {
         <nav className="tabs" aria-label="Menú principal">
           {TABS.map(([to, icon, label]) => (
             <NavLink key={to} to={to} className="tab" aria-label={label}>
-              <span className="tab-icon" aria-hidden="true">{icon}</span>
+              <Icon name={icon} />
               <span className="tab-label">{label}</span>
             </NavLink>
           ))}

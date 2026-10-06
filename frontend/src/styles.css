@@ -182,9 +182,10 @@ img, svg { max-width: 100%; }
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--line); }
 .tab { display: flex; align-items: center; justify-content: center; gap: 6px; height: 46px; min-width: 52px; padding: 0 14px;
   border-radius: 999px; color: var(--muted); transition: background .15s; }
-.tab-icon { font-size: 22px; line-height: 1; filter: grayscale(1); opacity: .65; }
 .tab-label { display: none; font-size: 14px; font-weight: 600; }
 .tab.active { background: var(--fg); color: var(--bg); }
-.tab.active .tab-icon { filter: none; opacity: 1; }
 .tab.active .tab-label { display: inline; }
 .toasts { bottom: calc(90px + env(safe-area-inset-bottom)); }
+
+.tab svg, .icon svg { display: block; flex: none; }
+.topbar .icon { padding: 8px; }
