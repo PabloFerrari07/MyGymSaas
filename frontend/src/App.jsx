@@ -5,8 +5,13 @@ import Workout from './pages/Workout.jsx'
 import Exercises from './pages/Exercises.jsx'
 import ExerciseHistory from './pages/ExerciseHistory.jsx'
 import Log from './pages/Log.jsx'
+import Login from './pages/Login.jsx'
+import { useAuth } from './auth.jsx'
 
 export default function App() {
+  const { user, loading, logout } = useAuth()
+  if (loading) return <p className="muted center">Cargando…</p>
+  if (!user) return <div className="app"><Login /></div>
   return (
     <div className="app">
       <nav className="nav">
@@ -14,6 +19,7 @@ export default function App() {
         <NavLink to="/routines">Rutinas</NavLink>
         <NavLink to="/exercises">Ejercicios</NavLink>
         <NavLink to="/log">Historial</NavLink>
+        <button className="icon" onClick={logout} aria-label="Cerrar sesión" title="Cerrar sesión">⎋</button>
       </nav>
       <main>
         <Routes>

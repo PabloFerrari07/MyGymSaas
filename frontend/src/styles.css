@@ -143,3 +143,7 @@ h2.section { margin: 28px 0 10px; color: var(--muted); font-size: 13px; font-wei
 .sheet-body { display: block; overscroll-behavior: contain; }
 .sheet .grid { grid-template-columns: repeat(2, 1fr); }
 .sheet .tile .thumb { max-height: 160px; }
+
+.login { display: grid; gap: 12px; max-width: 360px; margin: 0 auto; padding-top: 12vh; }
+.brand.big { font-size: 28px; margin: 0 0 8px; }
+.center { text-align: center; padding-top: 30vh; }
