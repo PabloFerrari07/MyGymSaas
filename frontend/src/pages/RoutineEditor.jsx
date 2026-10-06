@@ -38,7 +38,7 @@ export default function RoutineEditor() {
         ex = await api.createExercise({ name: item.name, image_url: item.image_url, muscle_group: item.muscle_group, place: item.place })
         reload()
       }
-      setItems((cur) => [...cur, { ...ex, exercise_id: ex.id, target_sets: 3, target_reps: 10 }])
+      setItems((cur) => [...cur, { ...ex, exercise_id: ex.id, target_sets: 3, target_reps: 10, target_weight: '' }])
       toast(`Añadido: ${item.name}`)
     } catch (e) {
       toast(e.message, 'error')
@@ -71,6 +71,7 @@ export default function RoutineEditor() {
         exercise_id: it.exercise_id,
         target_sets: Number(it.target_sets) || 3,
         target_reps: Number(it.target_reps) || 10,
+        target_weight: Number(it.target_weight) || 0,
       })),
     }
     try {
@@ -114,6 +115,11 @@ export default function RoutineEditor() {
                 <input className="input mini" type="number" inputMode="numeric" min="1" value={it.target_reps}
                   onChange={(e) => patch(i, 'target_reps', e.target.value)} aria-label="Repeticiones" />
                 <span className="small">reps</span>
+                <span className="small">@</span>
+                <input className="input mini" type="number" inputMode="decimal" step="0.5" min="0"
+                  placeholder="kg" value={it.target_weight || ''}
+                  onChange={(e) => patch(i, 'target_weight', e.target.value)} aria-label="Peso en kilos" />
+                <span className="small">kg</span>
               </div>
             </div>
             <div className="col">

@@ -5,6 +5,7 @@ import Workout from './pages/Workout.jsx'
 import Exercises from './pages/Exercises.jsx'
 import ExerciseHistory from './pages/ExerciseHistory.jsx'
 import Log from './pages/Log.jsx'
+import Progress from './pages/Progress.jsx'
 import Login from './pages/Login.jsx'
 import { useAuth } from './auth.jsx'
 
@@ -18,6 +19,7 @@ export default function App() {
         <span className="brand">mygym</span>
         <NavLink to="/routines">Rutinas</NavLink>
         <NavLink to="/exercises">Ejercicios</NavLink>
+        <NavLink to="/progress">Progreso</NavLink>
         <NavLink to="/log">Historial</NavLink>
         <button className="icon" onClick={logout} aria-label="Cerrar sesión" title="Cerrar sesión">⎋</button>
       </nav>
@@ -30,6 +32,7 @@ export default function App() {
           <Route path="/routines/:id/train" element={<Workout />} />
           <Route path="/exercises" element={<Exercises />} />
           <Route path="/exercises/:id" element={<ExerciseHistory />} />
+          <Route path="/progress" element={<Progress />} />
           <Route path="/log" element={<Log />} />
         </Routes>
       </main>

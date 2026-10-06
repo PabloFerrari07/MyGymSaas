@@ -29,7 +29,9 @@ export default function Workout() {
         const prev = lastMap[e.id]?.sets || []
         init[e.id] = Array.from({ length: e.target_sets }, (_, k) => {
           const ref = prev[k] || prev[prev.length - 1]
-          return { weight: ref ? String(ref.weight) : '', reps: ref ? String(ref.reps) : String(e.target_reps), done: false }
+          // The weight chosen in the routine wins; otherwise start from the last session.
+          const weight = e.target_weight > 0 ? String(e.target_weight) : ref ? String(ref.weight) : ''
+          return { weight, reps: ref ? String(ref.reps) : String(e.target_reps), done: false }
         })
       })
       setRoutine(r)
@@ -72,6 +74,12 @@ export default function Workout() {
         return before !== null && top > before
       })
       const volume = entries.flatMap((x) => x.sets).reduce((a, x) => a + Number(x.weight) * Number(x.reps), 0)
+      // The routine follows your progress: next time it starts from the weight you just lifted.
+      const items = routine.exercises.map((e) => {
+        const top = Math.max(0, ...entries.find((x) => x.exercise_id === e.id).sets.map((x) => Number(x.weight)))
+        return { exercise_id: e.id, target_sets: e.target_sets, target_reps: e.target_reps, target_weight: top || e.target_weight }
+      })
+      await api.updateRoutine(routine.id, { exercises: items }).catch(() => {})
       toast('Entreno guardado')
       setSummary({ sets: res.sets, volume, records })
     } catch (e) {
@@ -122,7 +130,7 @@ export default function Workout() {
               <div className="grow">
                 <Link to={`/exercises/${e.id}`}><strong>{e.name}</strong></Link>
                 <div className="muted small">
-                  Objetivo {e.target_sets} × {e.target_reps} · hechas {sets[e.id].filter((x) => x.done).length}/{sets[e.id].length}
+                  Objetivo {e.target_sets} × {e.target_reps}{e.target_weight > 0 ? ` @ ${fmt(e.target_weight)} kg` : ''} · hechas {sets[e.id].filter((x) => x.done).length}/{sets[e.id].length}
                 </div>
               </div>
             </div>

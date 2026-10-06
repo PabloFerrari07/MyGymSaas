@@ -8,6 +8,7 @@ import {
   getDoc,
   getDocs,
   serverTimestamp,
+  setDoc,
   updateDoc,
 } from 'firebase/firestore'
 import { auth, db } from './firebase.js'
@@ -42,16 +43,17 @@ const loadCatalog = () =>
 const isHome = (c) => HOME_EQUIPMENT.includes(c.e) || c.n.toLowerCase().includes('plate')
 
 async function catalog(q = '', place = '') {
-  const words = q.toLowerCase().split(/\s+/).filter(Boolean).map((w) => ALIASES[w] || w)
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean)
   const out = []
   for (const c of await loadCatalog()) {
     const home = isHome(c)
     if ((place === 'home' && !home) || (place === 'gym' && home)) continue
-    const hay = `${c.n} ${c.m} ${c.e}`.toLowerCase()
-    if (!words.every((w) => hay.includes(w))) continue
+    // Searchable in Spanish and English; a word also matches through its English alias.
+    const hay = `${c.s} ${c.ms} ${c.n} ${c.m} ${c.e}`.toLowerCase()
+    if (!words.every((w) => hay.includes(w) || (ALIASES[w] && hay.includes(ALIASES[w])))) continue
     out.push({
-      name: c.n,
-      muscle_group: c.m,
+      name: c.s,
+      muscle_group: c.ms,
       equipment: c.e,
       place: home ? 'home' : 'gym',
       image_url: IMG_BASE + c.i[0],
@@ -61,8 +63,28 @@ async function catalog(q = '', place = '') {
   return out
 }
 
+// Exercises saved before the catalog was translated get their Spanish name once.
+let translated = false
+async function translateSaved(rows) {
+  if (translated) return rows
+  translated = true
+  const byImage = Object.fromEntries((await loadCatalog()).map((c) => [IMG_BASE + c.i[0], c]))
+  await Promise.all(
+    rows.map(async (e) => {
+      const c = byImage[e.image_url]
+      if (c && e.name === c.n) {
+        e.name = c.s
+        e.muscle_group = c.ms
+        await updateDoc(ref('exercises', e.id), { name: c.s, muscle_group: c.ms }).catch(() => {})
+      }
+    }),
+  )
+  return rows
+}
+
 // ---------- Exercises ----------
-const exercises = async () => (await list('exercises')).sort((a, b) => a.name.localeCompare(b.name))
+const exercises = async () =>
+  (await translateSaved(await list('exercises'))).sort((a, b) => a.name.localeCompare(b.name))
 
 async function createExercise(b) {
   const name = clean(b.name)
@@ -107,7 +129,12 @@ function resolveRoutine(r, exMap) {
     name: r.name,
     exercises: (r.items || [])
       .filter((i) => exMap[i.exercise_id])
-      .map((i) => ({ ...exMap[i.exercise_id], target_sets: i.target_sets, target_reps: i.target_reps })),
+      .map((i) => ({
+        ...exMap[i.exercise_id],
+        target_sets: i.target_sets,
+        target_reps: i.target_reps,
+        target_weight: i.target_weight || 0,
+      })),
   }
 }
 
@@ -116,6 +143,7 @@ const toItems = (exs) =>
     exercise_id: e.exercise_id,
     target_sets: Number(e.target_sets) || 3,
     target_reps: Number(e.target_reps) || 10,
+    target_weight: Math.max(0, Number(e.target_weight) || 0),
   }))
 
 async function routines() {
@@ -231,7 +259,16 @@ async function recentWorkouts() {
 
 const deleteWorkout = (id) => deleteDoc(ref('workouts', id))
 
+// ---------- Settings (rest days of the week, 0 = Sunday) ----------
+async function settings() {
+  const snap = await getDoc(ref('settings', 'prefs'))
+  return { rest_days: snap.exists() ? snap.data().rest_days || [] : [] }
+}
+const saveSettings = (data) => setDoc(ref('settings', 'prefs'), data, { merge: true })
+
 export const api = {
+  settings,
+  saveSettings,
   catalog,
   exercises,
   createExercise,

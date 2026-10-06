@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { api } from '../api.js'
-import { Thumb, formatDate, useLoad } from '../components.jsx'
+import { Thumb, fmt, formatDate, useLoad } from '../components.jsx'
 
 const today = () => new Date().toLocaleDateString('sv')
 
@@ -38,7 +38,9 @@ export default function Routines() {
               {r.exercises.map((e) => (
                 <li key={e.id}>
                   <span>{e.name}</span>
-                  <span className="muted">{e.target_sets} × {e.target_reps}</span>
+                  <span className="muted">
+                    {e.target_sets} × {e.target_reps}{e.target_weight > 0 ? ` @ ${fmt(e.target_weight)} kg` : ''}
+                  </span>
                 </li>
               ))}
             </ul>
