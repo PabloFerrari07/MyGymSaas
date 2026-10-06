@@ -165,3 +165,26 @@ h2.section { margin: 28px 0 10px; color: var(--muted); font-size: 13px; font-wei
 .bar-val { font-size: 11px; color: var(--muted); }
 .bar-label { font-size: 10px; color: var(--muted); white-space: nowrap; }
 select.input { appearance: auto; }
+
+/* ---- no accidental zoom / horizontal scroll on phones ---- */
+html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; touch-action: manipulation; }
+input, select, textarea, button { font-size: 16px; }
+.input.mini { font-size: 16px; width: 58px; }
+.target { flex-wrap: wrap; }
+.item, .row, .grow { min-width: 0; }
+img, svg { max-width: 100%; }
+
+/* ---- top bar + bottom tabs ---- */
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 6px; }
+.topbar .brand { margin: 0; font-size: 18px; }
+.app.has-tabs { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; justify-content: center; gap: 4px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--line); }
+.tab { display: flex; align-items: center; justify-content: center; gap: 6px; height: 46px; min-width: 52px; padding: 0 14px;
+  border-radius: 999px; color: var(--muted); transition: background .15s; }
+.tab-icon { font-size: 22px; line-height: 1; filter: grayscale(1); opacity: .65; }
+.tab-label { display: none; font-size: 14px; font-weight: 600; }
+.tab.active { background: var(--fg); color: var(--bg); }
+.tab.active .tab-icon { filter: none; opacity: 1; }
+.tab.active .tab-label { display: inline; }
+.toasts { bottom: calc(90px + env(safe-area-inset-bottom)); }

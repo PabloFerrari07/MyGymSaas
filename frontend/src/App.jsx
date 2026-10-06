@@ -1,4 +1,4 @@
-import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Routines from './pages/Routines.jsx'
 import RoutineEditor from './pages/RoutineEditor.jsx'
 import Workout from './pages/Workout.jsx'
@@ -9,20 +9,26 @@ import Progress from './pages/Progress.jsx'
 import Login from './pages/Login.jsx'
 import { useAuth } from './auth.jsx'
 
+const TABS = [
+  ['/routines', '🏋️', 'Rutinas'],
+  ['/exercises', '💪', 'Ejercicios'],
+  ['/progress', '📈', 'Progreso'],
+  ['/log', '🗓️', 'Historial'],
+]
+
 export default function App() {
   const { user, loading, logout } = useAuth()
+  const { pathname } = useLocation()
+  // Focus screens (editing a routine, training) have their own action bar, so the tabs hide there.
+  const focus = /^\/routines\/(new|[^/]+\/(edit|train))/.test(pathname)
   if (loading) return <p className="muted center">Cargando…</p>
   if (!user) return <div className="app"><Login /></div>
   return (
-    <div className="app">
-      <nav className="nav">
+    <div className={`app ${focus ? '' : 'has-tabs'}`}>
+      <header className="topbar">
         <span className="brand">mygym</span>
-        <NavLink to="/routines">Rutinas</NavLink>
-        <NavLink to="/exercises">Ejercicios</NavLink>
-        <NavLink to="/progress">Progreso</NavLink>
-        <NavLink to="/log">Historial</NavLink>
         <button className="icon" onClick={logout} aria-label="Cerrar sesión" title="Cerrar sesión">⎋</button>
-      </nav>
+      </header>
       <main>
         <Routes>
           <Route path="/" element={<Navigate to="/routines" replace />} />
@@ -36,6 +42,16 @@ export default function App() {
           <Route path="/log" element={<Log />} />
         </Routes>
       </main>
+      {!focus && (
+        <nav className="tabs" aria-label="Menú principal">
+          {TABS.map(([to, icon, label]) => (
+            <NavLink key={to} to={to} className="tab" aria-label={label}>
+              <span className="tab-icon" aria-hidden="true">{icon}</span>
+              <span className="tab-label">{label}</span>
+            </NavLink>
+          ))}
+        </nav>
+      )}
     </div>
   )
 }
