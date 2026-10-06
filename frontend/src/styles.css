@@ -5,6 +5,7 @@
   --line: #e8e8e8;
   --soft: #f6f6f6;
   --danger: #c0392b;
+  --muscle: #d6d6d6;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -15,6 +16,7 @@
     --line: #242424;
     --soft: #181818;
     --danger: #e5675a;
+    --muscle: #3a3a3a;
   }
 }
 
@@ -80,7 +82,7 @@ h2.section { margin: 28px 0 10px; color: var(--muted); font-size: 13px; font-wei
 .chip:hover { background: var(--soft); }
 
 .beat { font-size: 13px; margin: 12px 0; padding: 8px 10px; background: var(--soft); border-radius: 8px; }
-.sets { display: grid; grid-template-columns: 24px 1fr 1fr 44px; gap: 8px; align-items: center; margin-bottom: 8px; }
+.sets { display: grid; grid-template-columns: 22px 1fr 1fr 44px 34px; gap: 8px; align-items: center; margin-bottom: 8px; }
 
 .stat { display: grid; gap: 2px; }
 .stat strong { font-size: 24px; letter-spacing: -0.02em; }
@@ -189,3 +191,48 @@ img, svg { max-width: 100%; }
 
 .tab svg, .icon svg { display: block; flex: none; }
 .topbar .icon { padding: 8px; }
+
+/* ---- compact exercise lists (many exercises stay tidy) ---- */
+.trunc { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.nowrap { white-space: nowrap; }
+.ex-compact { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.ex-row + .ex-row { border-top: 1px solid var(--line); }
+.ex-head { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; font: inherit; color: inherit;
+  text-align: left; background: transparent; border: 0; cursor: pointer; min-height: 56px; }
+.ex-head.static { cursor: default; }
+.ex-main { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.ex-num { width: 20px; text-align: center; font-size: 13px; color: var(--muted); flex: none; }
+.chev { color: var(--muted); display: grid; transition: transform .15s; }
+.ex-row.open .chev { transform: rotate(180deg); }
+.ex-row.open { background: var(--soft); }
+.ex-row.complete .ex-num { color: var(--fg); font-weight: 700; }
+.ex-edit { padding: 4px 12px 14px; display: grid; gap: 12px; }
+.ex-actions { display: flex; align-items: center; gap: 6px; }
+.ex-actions .danger { margin-left: auto; color: var(--danger); }
+.ex-actions .icon:disabled { opacity: .3; }
+.steppers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stepper { display: grid; gap: 4px; justify-items: center; }
+.stepper-row { display: flex; align-items: center; width: 100%; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); overflow: hidden; }
+.step { flex: none; width: 34px; height: 40px; display: grid; place-items: center; border: 0; background: transparent; color: var(--fg); cursor: pointer; }
+.step:active { background: var(--soft); }
+.step-input { width: 100%; min-width: 0; height: 40px; border: 0; background: transparent; color: var(--fg); text-align: center; font: inherit; font-size: 16px; padding: 0; appearance: textfield; -moz-appearance: textfield; }
+.step-input::-webkit-inner-spin-button, .step-input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.step-input:focus { outline: none; }
+.chip.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.chips-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.chips-scroll::-webkit-scrollbar { display: none; }
+.chips-scroll .chip { flex: none; white-space: nowrap; }
+
+/* ---- body drawing ---- */
+.body-picker { display: grid; gap: 12px; justify-items: center; }
+.body-picker .seg { width: 100%; }
+.body-picker .chips { justify-content: center; min-height: 32px; }
+.body-svg { width: 100%; max-width: 230px; height: auto; }
+.body-mini { flex: none; width: auto; }
+.sil rect, .sil circle { fill: var(--soft); stroke: var(--line); stroke-width: 1; }
+.muscle > * { fill: var(--muscle); stroke: var(--bg); stroke-width: 1; transition: fill .12s; }
+.muscle.on > * { fill: var(--fg); }
+.muscle.tap { cursor: pointer; outline: none; }
+.muscle.tap:focus-visible > * { stroke: var(--fg); stroke-width: 1.5; }
+.routine-top { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+.routine-top h2 { font-size: 17px; }

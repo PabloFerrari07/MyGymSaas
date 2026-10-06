@@ -42,12 +42,13 @@ const loadCatalog = () =>
   }))
 const isHome = (c) => HOME_EQUIPMENT.includes(c.e) || c.n.toLowerCase().includes('plate')
 
-async function catalog(q = '', place = '') {
+async function catalog(q = '', place = '', muscles = []) {
   const words = q.toLowerCase().split(/\s+/).filter(Boolean)
   const out = []
   for (const c of await loadCatalog()) {
     const home = isHome(c)
     if ((place === 'home' && !home) || (place === 'gym' && home)) continue
+    if (muscles.length && !muscles.includes(c.m)) continue
     // Searchable in Spanish and English; a word also matches through its English alias.
     const hay = `${c.s} ${c.ms} ${c.n} ${c.m} ${c.e}`.toLowerCase()
     if (!words.every((w) => hay.includes(w) || (ALIASES[w] && hay.includes(ALIASES[w])))) continue
@@ -127,6 +128,7 @@ function resolveRoutine(r, exMap) {
   return {
     id: r.id,
     name: r.name,
+    muscles: r.muscles || [],
     exercises: (r.items || [])
       .filter((i) => exMap[i.exercise_id])
       .map((i) => ({
@@ -137,6 +139,8 @@ function resolveRoutine(r, exMap) {
       })),
   }
 }
+
+const cleanMuscles = (m) => (Array.isArray(m) ? m.filter((x) => typeof x === 'string').slice(0, 17) : [])
 
 const toItems = (exs) =>
   (exs || []).map((e) => ({
@@ -165,7 +169,12 @@ async function routine(id) {
 async function createRoutine(b) {
   const name = clean(b.name)
   if (!name) throw new Error('El nombre es obligatorio')
-  const r = await addDoc(col('routines'), { name, items: toItems(b.exercises), createdAt: serverTimestamp() })
+  const r = await addDoc(col('routines'), {
+    name,
+    muscles: cleanMuscles(b.muscles),
+    items: toItems(b.exercises),
+    createdAt: serverTimestamp(),
+  })
   return { id: r.id }
 }
 
@@ -176,6 +185,7 @@ async function updateRoutine(id, b) {
     if (!data.name) throw new Error('El nombre es obligatorio')
   }
   if ('exercises' in b) data.items = toItems(b.exercises)
+  if ('muscles' in b) data.muscles = cleanMuscles(b.muscles)
   await updateDoc(ref('routines', id), data)
 }
 

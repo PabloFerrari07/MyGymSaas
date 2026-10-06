@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import ExerciseSheet from '../CatalogPicker.jsx'
 import { PlaceFilter, Thumb, useLoad } from '../components.jsx'
+import Icon from '../icons.jsx'
 import { useToast } from '../toast.jsx'
 
 const EMPTY = { name: '', image_url: '', muscle_group: '' }
@@ -15,6 +16,10 @@ export default function Exercises() {
   const [adding, setAdding] = useState(false)
   const [place, setPlace] = useState('')
   const visible = data?.filter((e) => !place || e.place === place)
+  // Grouped by muscle so a long list stays easy to scan.
+  const groups = {}
+  visible?.forEach((e) => (groups[e.muscle_group || 'Otros'] ||= []).push(e))
+  const groupNames = Object.keys(groups).sort((a, b) => a.localeCompare(b))
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const mine = data?.map((e) => e.image_url) || []
@@ -94,19 +99,29 @@ export default function Exercises() {
       {data && data.length > 0 && visible.length === 0 && (
         <p className="muted">No tienes ejercicios de {place === 'home' ? 'casa' : 'gym'} todavía.</p>
       )}
-      <ul className="list">
-        {visible?.map((e) => (
-          <li key={e.id} className="card item">
-            <Thumb src={e.image_url} name={e.name} size={48} />
-            <div className="grow">
-              <Link to={`/exercises/${e.id}`}><strong>{e.name}</strong></Link>
-              {e.muscle_group && <div className="muted small">{e.muscle_group}</div>}
-            </div>
-            <button className="icon" onClick={() => edit(e)} aria-label="Editar">✎</button>
-            <button className="icon" onClick={() => remove(e)} aria-label="Borrar">×</button>
-          </li>
-        ))}
-      </ul>
+      {groupNames.map((g) => (
+        <section key={g}>
+          <h2 className="section">{g} · {groups[g].length}</h2>
+          <ul className="ex-compact">
+            {groups[g].map((e) => (
+              <li key={e.id} className="ex-row">
+                <div className="ex-head static">
+                  <Thumb src={e.image_url} name={e.name} size={40} />
+                  <Link className="ex-main" to={`/exercises/${e.id}`}>
+                    <strong className="trunc">{e.name}</strong>
+                  </Link>
+                  <button className="icon" onClick={() => edit(e)} aria-label={`Editar ${e.name}`}>
+                    <Icon name="edit" size={18} />
+                  </button>
+                  <button className="icon" onClick={() => remove(e)} aria-label={`Borrar ${e.name}`}>
+                    <Icon name="x" size={18} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       {adding && (
         <ExerciseSheet
