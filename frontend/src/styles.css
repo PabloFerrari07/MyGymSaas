@@ -245,3 +245,15 @@ img, svg { max-width: 100%; }
 .plan li { gap: 12px; min-width: 0; }
 .plan li > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card .actions { flex-wrap: wrap; }
+
+/* ---- exercise description ---- */
+.info { display: grid; gap: 12px; }
+.info-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.info-photos figure { margin: 0; display: grid; gap: 4px; }
+.info-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; background: var(--soft); }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 15px; line-height: 1.5; }
+.howto { justify-self: start; display: inline-flex; align-items: center; gap: 6px; padding-left: 0; }
+.howto .chev { transition: transform .15s; }
+.howto .chev.up { transform: rotate(180deg); }
+.back { margin-left: -8px; }
+a.routine-top { color: inherit; }

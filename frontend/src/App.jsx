@@ -1,5 +1,6 @@
 import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Routines from './pages/Routines.jsx'
+import RoutineDetail from './pages/RoutineDetail.jsx'
 import RoutineEditor from './pages/RoutineEditor.jsx'
 import Workout from './pages/Workout.jsx'
 import Exercises from './pages/Exercises.jsx'
@@ -34,6 +35,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/routines" replace />} />
           <Route path="/routines" element={<Routines />} />
+          <Route path="/routines/:id" element={<RoutineDetail />} />
           <Route path="/routines/new" element={<RoutineEditor />} />
           <Route path="/routines/:id/edit" element={<RoutineEditor />} />
           <Route path="/routines/:id/train" element={<Workout />} />

@@ -9,6 +9,7 @@ const PATHS = {
       <path d="M3 10h18M8 3v4M16 3v4" />
     </>
   ),
+  back: <path d="M15 18l-6-6 6-6" />,
   chevron: <path d="M6 9l6 6 6-6" />,
   plus: <path d="M12 5v14M5 12h14" />,
   minus: <path d="M5 12h14" />,

@@ -64,6 +64,29 @@ async function catalog(q = '', place = '', muscles = []) {
   return out
 }
 
+// Description of an exercise (photos, steps, equipment) from the catalog; null if it is not a catalog exercise.
+const EQUIP = {
+  'body only': 'peso corporal', machine: 'máquina', cable: 'polea', barbell: 'barra', dumbbell: 'mancuernas',
+  kettlebells: 'pesa rusa', bands: 'bandas', 'medicine ball': 'balón medicinal', 'exercise ball': 'pelota de ejercicio',
+  'foam roll': 'rodillo', 'e-z curl bar': 'barra Z', other: 'otro',
+}
+let infoPromise
+const loadInfo = () =>
+  (infoPromise ??= fetch('/instructions.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})))
+
+async function exerciseInfo(exercise) {
+  const c = (await loadCatalog()).find((x) => IMG_BASE + x.i[0] === exercise.image_url)
+  if (!c) return null
+  const info = (await loadInfo())[c.i[0].split('/')[0]] || {}
+  return {
+    images: c.i.map((p) => IMG_BASE + p),
+    steps: info.s || [],
+    secondary: info.sm || [],
+    level: info.l || '',
+    equipment: EQUIP[c.e] || '',
+  }
+}
+
 // Exercises saved before the catalog was translated get their Spanish name once.
 let translated = false
 async function translateSaved(rows) {
@@ -277,6 +300,7 @@ async function settings() {
 const saveSettings = (data) => setDoc(ref('settings', 'prefs'), data, { merge: true })
 
 export const api = {
+  exerciseInfo,
   settings,
   saveSettings,
   catalog,

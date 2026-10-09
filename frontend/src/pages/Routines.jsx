@@ -29,7 +29,7 @@ export default function Routines() {
           const rest = r.exercises.length - PREVIEW
           return (
             <li key={r.id} className="card routine">
-              <div className="routine-top">
+              <Link className="routine-top" to={`/routines/${r.id}`} aria-label={`Abrir ${r.name}`}>
                 <BodyMini muscles={muscles} height={104} />
                 <div className="grow">
                   <h2 className="trunc">{r.name}</h2>
@@ -45,7 +45,7 @@ export default function Routines() {
                     {muscles.length > 0 && ` · ${muscles.map((m) => MUSCLE_LABEL[m]).join(', ')}`}
                   </div>
                 </div>
-              </div>
+              </Link>
               <ul className="plan">
                 {r.exercises.slice(0, PREVIEW).map((e) => (
                   <li key={e.id}>

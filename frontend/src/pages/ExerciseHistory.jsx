@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api.js'
 import { Thumb, fmt, formatDate, useLoad } from '../components.jsx'
+import ExerciseInfo from '../ExerciseInfo.jsx'
 
 function Chart({ sessions }) {
   const pts = [...sessions].reverse().map((s) => s.top_weight)
@@ -39,6 +40,10 @@ export default function ExerciseHistory() {
         </div>
       </header>
 
+      <h2 className="section">Cómo se hace</h2>
+      <div className="card"><ExerciseInfo exercise={e} /></div>
+
+      <h2 className="section">Tu progreso</h2>
       {best && (
         <div className="card stat">
           <span className="muted small">Mejor serie</span>

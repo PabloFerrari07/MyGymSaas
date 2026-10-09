@@ -2,10 +2,19 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api.js'
 import { Thumb, fmt, formatDate } from '../components.jsx'
+import ExerciseInfo from '../ExerciseInfo.jsx'
 import Icon from '../icons.jsx'
 import { useToast } from '../toast.jsx'
 
 const today = () => new Date().toLocaleDateString('sv') // YYYY-MM-DD, local time
+const PREF = 'mygym.showInfo'
+const readPref = () => {
+  try {
+    return localStorage.getItem(PREF) !== '0'
+  } catch {
+    return true
+  }
+}
 const topWeight = (list) => Math.max(0, ...list.map((x) => Number(x.weight)))
 
 export default function Workout() {
@@ -16,6 +25,7 @@ export default function Workout() {
   const [last, setLast] = useState({}) // exercise_id -> most recent session
   const [sets, setSets] = useState({}) // exercise_id -> [{weight, reps, done}]
   const [open, setOpen] = useState(null) // exercise being trained (one open at a time)
+  const [showInfo, setShowInfo] = useState(readPref) // how-to is shown by default; the choice is remembered
   const [date, setDate] = useState(today())
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -67,6 +77,15 @@ export default function Workout() {
       return { ...cur, [eid]: [...list, { weight: lastSet?.weight ?? '', reps: lastSet?.reps ?? '', done: false }] }
     })
   const removeSet = (eid, i) => setSets((cur) => ({ ...cur, [eid]: cur[eid].filter((_, idx) => idx !== i) }))
+  function toggleInfo() {
+    const next = !showInfo
+    setShowInfo(next)
+    try {
+      localStorage.setItem(PREF, next ? '1' : '0')
+    } catch {
+      /* private mode: the choice just isn't remembered */
+    }
+  }
   const doneCount = Object.values(sets).flat().filter((s) => s.done).length
   const totalCount = Object.values(sets).flat().length
 
@@ -160,6 +179,11 @@ export default function Workout() {
 
               {isOpen && (
                 <div className="ex-edit">
+                  <button type="button" className="btn ghost howto" aria-expanded={showInfo} onClick={toggleInfo}>
+                    Cómo se hace
+                    <span className={`chev ${showInfo ? 'up' : ''}`}><Icon name="chevron" size={16} /></span>
+                  </button>
+                  {showInfo && <ExerciseInfo exercise={e} />}
                   {prev ? (
                     <p className="beat">
                       Última vez ({formatDate(prev.date)}):{' '}
